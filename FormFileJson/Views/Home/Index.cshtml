@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Cadastrar candidato</h1>
+
+<div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Nome</label>
+        <input type="email" class="form-control" id="nome">
+    </div>
+    <div class="form-group">
+        <label for="sobrenome">Sobrenome</label>
+        <input type="text" class="form-control" id="sobrenome">
+    </div>
+    <div class="form-group">
+        <label for="imagemCandidato">Anexar imagem</label>
+        <input type="file" class="form-control-file" id="imagemCandidato">
+    </div>
+    <button type="button" class="btn btn-primary">Submit</button>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(() => {
+            $('button').click(() => {
+
+                const files = $('#imagemCandidato').get(0).files
+                const candidato = {
+                    nome: $('#nome').val(),
+                    sobrenome: $('#sobrenome').val()
+                }
+
+                if (candidato.nome == "" || candidato.sobrenome == "" || files.length == 0) {
+                    showMessage("Todos os campos devem ser preenchidos", "warning")
+                    return
+                }
+
+                let form = new FormData()
+                form.append("candidato", JSON.stringify(candidato))
+                form.append("ImagemUpload", files[0], files[0].name)
+
+                $.ajax({
+                    url: '/Home/Index',
+                    type: 'post',
+                    enctype: 'multipart/form-data',
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: res => {
+                        showMessage("Cadastro realizado com sucesso!")
+                    },
+                    error: res => {
+                        console.log(res);
+                        showMessage("Houve um erro ao tentar processar os dados")
+                    }
+                })                
+            })
+        })       
+    </script>    
+}
+
+
